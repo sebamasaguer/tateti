@@ -1,70 +1,183 @@
-# Getting Started with Create React App
+# Tateti-chatgpt
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Aquí tienes un ejemplo de cómo puedes crear un juego de Tic Tac Toe en React:
 
-## Available Scripts
+1. Crea un nuevo proyecto de React ejecutando el siguiente comando en la terminal:
+```bash
+npx create-react-app tic-tac-toe
+```
 
-In the project directory, you can run:
+2. Cambia al directorio del proyecto de React:
+```bash
+cd tic-tac-toe
+```
 
-### `npm start`
+3. Reemplaza el contenido del archivo `src/App.js` con el siguiente código:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```javascript
+import React, { useState } from 'react';
+import './App.css';
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+function App() {
+  const [board, setBoard] = useState([
+    ['', '', ''],
+    ['', '', ''],
+    ['', '', '']
+  ]);
+  const [currentPlayer, setCurrentPlayer] = useState('X');
+  const [gameStatus, setGameStatus] = useState('ongoing');
 
-### `npm test`
+  const makeMove = (row, col) => {
+    if (board[row][col] === '' && gameStatus === 'ongoing') {
+      const newBoard = [...board];
+      newBoard[row][col] = currentPlayer;
+      setBoard(newBoard);
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+      if (checkWin(currentPlayer)) {
+        setGameStatus('win');
+        alert(`Player ${currentPlayer} wins!`);
+      } else if (checkDraw(newBoard)) {
+        setGameStatus('draw');
+        alert('It\'s a draw!');
+      } else {
+        setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X');
+      }
+    }
+  };
 
-### `npm run build`
+  const checkWin = (player) => {
+    // Verificar filas
+    for (let i = 0; i < 3; i++) {
+      if (
+        board[i][0] === player &&
+        board[i][1] === player &&
+        board[i][2] === player
+      ) {
+        return true;
+      }
+    }
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+    // Verificar columnas
+    for (let j = 0; j < 3; j++) {
+      if (
+        board[0][j] === player &&
+        board[1][j] === player &&
+        board[2][j] === player
+      ) {
+        return true;
+      }
+    }
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+    // Verificar diagonales
+    if (
+      board[0][0] === player &&
+      board[1][1] === player &&
+      board[2][2] === player
+    ) {
+      return true;
+    }
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+    if (
+      board[0][2] === player &&
+      board[1][1] === player &&
+      board[2][0] === player
+    ) {
+      return true;
+    }
 
-### `npm run eject`
+    return false;
+  };
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+  const checkDraw = (currentBoard) => {
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        if (currentBoard[i][j] === '') {
+          return false;
+        }
+      }
+    }
+    return true;
+  };
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+  const resetGame = () => {
+    setBoard([
+      ['', '', ''],
+      ['', '', ''],
+      ['', '', '']
+    ]);
+    setCurrentPlayer('X');
+    setGameStatus('ongoing');
+  };
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+  return (
+    <div className="App">
+      <h1>Tic Tac Toe</h1>
+      <div className="board">
+        {board.map((row, rowIndex) => (
+          <div key={rowIndex} className="row">
+            {row.map((cell, colIndex) => (
+              <div
+                key={colIndex}
+                className={`cell ${cell}`}
+                onClick={() => makeMove(rowIndex, colIndex)}
+              >
+                {cell
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+}
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+      {gameStatus !== 'ongoing' && (
+        <button onClick={resetGame}>Restart</button>
+      )}
+    </div>
+  );
+}
 
-## Learn More
+export default App;
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+4. Reemplaza el contenido del archivo `src/App.css` con el siguiente código:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```css
+.App {
+  text-align: center;
+}
 
-### Code Splitting
+.board {
+  display: inline-block;
+  margin-top: 50px;
+}
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+.row {
+  display: flex;
+}
 
-### Analyzing the Bundle Size
+.cell {
+  width: 100px;
+  height: 100px;
+  border: 1px solid #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  cursor: pointer;
+}
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+.X {
+  color: blue;
+}
 
-### Making a Progressive Web App
+.O {
+  color: red;
+}
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+5. Ejecuta el siguiente comando en la terminal para iniciar el frontend:
+```bash
+npm start
+```
 
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+El frontend se iniciará y estará disponible en `http://localhost:3000`. Verás el tablero de juego y podrás hacer clic en las celdas para realizar movimientos.
